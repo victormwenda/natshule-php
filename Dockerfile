@@ -16,6 +16,10 @@ RUN cd /opt/oracle && yum -y install oracle-instantclient18.3-basic-18.3.0.0.0-3
 RUN cd /opt/oracle && yum -y install oracle-instantclient18.3-devel-18.3.0.0.0-3.x86_64.rpm
 RUN sh -c "echo /usr/lib/oracle/18.3/client64/lib > /etc/ld.so.conf.d/oracle.conf"
 
+
+#Install libnsl
+RUN dnf -y install libnsl-2.28-211.el8.x86_64.rpm
+
 # Build OCI8
 RUN tar -zxvf /opt/oracle/oci8-2.2.0.tgz -C /opt/oracle \
   && cd /opt/oracle/oci8-2.2.0  \
@@ -23,6 +27,10 @@ RUN tar -zxvf /opt/oracle/oci8-2.2.0.tgz -C /opt/oracle \
   && /opt/oracle/oci8-2.2.0/configure --with-oci8=shared,instantclient --with-php-config=/usr/bin/php-config \
   && cd /opt/oracle/oci8-2.2.0 && make install
 
+# Enable oci8
+RUN echo $'; Enable oci8.so extension\nextension=oci8' > /etc/php.d/oracle-oci.ini
+
+# Remove unwanted files
 RUN rm -rf /opt/oracle
 
 MAINTAINER Victor Mwenda <vmwenda.vm@gmail.com>
