@@ -1,2 +1,2 @@
-./s2i build https://github.com/sclorg/s2i-php-container.git registry.redhat.io/ubi8/php-74 victormwenda/natshule-php7.4
-./s2i build https://github.com/sclorg/s2i-php-container.git registry.redhat.io/rhel8/php-74 victormwenda/natshule-php7.4:latest
+./s2i build https://github.com/sclorg/s2i-php-container.git registry.redhat.io/ubi8/php-74 victormwenda/ubi8-php7.4-base:latest
+./s2i build https://github.com/sclorg/s2i-php-container.git registry.redhat.io/rhel8/php-74 victormwenda/rhel8-php7.4-base:latest

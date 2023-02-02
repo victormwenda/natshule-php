@@ -1,6 +1,9 @@
-#Create image from docker.io/victormwenda/natshule-html base image
-# First build from s2i build https://github.com/sclorg/s2i-php-container.git registry.redhat.io/rhscl/php-72-rhel7 victormwenda/natshule-php7.2
-FROM victormwenda/natshule-php7.4:latest
+# First build from s2i images and come with other base image for customization
+FROM victormwenda/natshule-rhel8-php74-base:latest
+
+# Expose ports
+EXPOSE 8080
+EXPOSE 8443
 
 #Use root
 USER 0
@@ -12,13 +15,13 @@ RUN yum -y install php-devel
 # Oracle
 RUN mkdir /opt/oracle
 ADD oci/ /opt/oracle
-RUN cd /opt/oracle && yum -y install oracle-instantclient18.3-basic-18.3.0.0.0-3.x86_64.rpm
-RUN cd /opt/oracle && yum -y install oracle-instantclient18.3-devel-18.3.0.0.0-3.x86_64.rpm
+RUN yum -y install /opt/oracle/oracle-instantclient18.3-basic-18.3.0.0.0-3.x86_64.rpm
+RUN yum -y install /opt/oracle/oracle-instantclient18.3-devel-18.3.0.0.0-3.x86_64.rpm
 RUN sh -c "echo /usr/lib/oracle/18.3/client64/lib > /etc/ld.so.conf.d/oracle.conf"
 
 
 #Install libnsl
-RUN dnf -y install libnsl-2.28-211.el8.x86_64.rpm
+RUN dnf -y install /opt/oracle/libnsl-2.28-211.el8.x86_64.rpm
 
 # Build OCI8
 RUN tar -zxvf /opt/oracle/oci8-2.2.0.tgz -C /opt/oracle \
@@ -30,8 +33,12 @@ RUN tar -zxvf /opt/oracle/oci8-2.2.0.tgz -C /opt/oracle \
 # Enable oci8
 RUN echo $'; Enable oci8.so extension\nextension=oci8' > /etc/php.d/oracle-oci.ini
 
+#Validate php libraries are not errorneous
+RUN php -v
+
 # Remove unwanted files
 RUN rm -rf /opt/oracle
+RUN rm -rf /opt/app-root/src/*
 
 MAINTAINER Victor Mwenda <vmwenda.vm@gmail.com>
 
